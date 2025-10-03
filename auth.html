@@ -3,67 +3,64 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Вход / Регистрация — Автосалон</title>
+  <title>Вход / Регистрация — АвтоLuxe</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Хедер -->
   <header class="site-header small">
-    <div class="container">
-      <a class="logo" href="index.html">АвтоLuxe</a>
+    <div class="container header-top">
+      <a class="brand" href="index.html">
+        <img src="https://i.ibb.co/svXFyxSK/logo.jpg" alt="AutoLuxe logo" class="logo-img">
+      </a>
       <nav class="nav">
         <a href="index.html">Главная</a>
-        <a href="product.html">Каталог</a>
+        <a href="index.html">Каталог</a>
         <a href="auth.html" class="btn-small">Вход</a>
       </nav>
     </div>
   </header>
 
-  <!-- Основной блок -->
   <main class="auth-main">
     <div class="auth-box">
-      <div class="tabs">
+      <div class="tabs" role="tablist">
         <button class="tab-btn active" onclick="showTab('login')">Вход</button>
         <button class="tab-btn" onclick="showTab('register')">Регистрация</button>
       </div>
 
-      <!-- Вкладка вход -->
       <div id="login" class="tab-content active">
-        <form class="auth-form" onsubmit="return false;">
+        <form class="auth-form" id="login-form" onsubmit="return false;">
           <label>Электронная почта
-            <input type="email" placeholder="email@example.com" required>
+            <input type="email" name="login" placeholder="email@example.com" required>
           </label>
           <label>Пароль
-            <input type="password" placeholder="••••••" required>
+            <input type="password" name="password" placeholder="••••••" required>
           </label>
           <div class="auth-actions">
-            <button class="btn">Войти</button>
+            <button class="btn" type="submit">Войти</button>
             <a class="link" href="#">Забыли пароль?</a>
           </div>
         </form>
       </div>
 
-      <!-- Вкладка регистрация -->
       <div id="register" class="tab-content">
-        <form class="auth-form" onsubmit="return false;">
+        <form class="auth-form" id="register-form" onsubmit="return false;">
           <label>ФИО
-            <input type="text" placeholder="Иванов Иван" required>
+            <input type="text" name="name" placeholder="Иванов Иван" required>
           </label>
           <label>Электронная почта
-            <input type="email" placeholder="email@example.com" required>
+            <input type="email" name="login" placeholder="email@example.com" required>
           </label>
           <label>Пароль
-            <input type="password" placeholder="••••••" required>
+            <input type="password" name="password" placeholder="••••••" required>
           </label>
           <div class="auth-actions">
-            <button class="btn btn-primary">Зарегистрироваться</button>
+            <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
           </div>
         </form>
       </div>
     </div>
   </main>
 
-  <!-- Футер -->
   <footer class="site-footer">
     <div class="container">
       <p>Практическая работа 1 // Ивашин Андрей // Автосалон</p>
@@ -78,7 +75,7 @@
       document.getElementById(tab).classList.add('active');
     }
   </script>
+
+  <script type="module" src="server/main.js"></script>
 </body>
 </html>
-
-

@@ -3,61 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tesla Model S — Автосалон</title>
+  <title>АвтоLuxe — Автомобиль</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="site-header small">
-    <div class="container">
-      <a class="logo" href="index.html">АвтоLuxe</a>
+    <div class="container header-top">
+      <a class="brand" href="index.html">
+        <img src="https://i.ibb.co/svXFyxSK/logo.jpg" alt="AutoLuxe logo" class="logo-img">
+      </a>
       <nav class="nav">
         <a href="index.html">Главная</a>
-        <a href="product.html">Каталог</a>
+        <a href="index.html">Каталог</a>
         <a href="auth.html" class="btn-small">Вход</a>
       </nav>
     </div>
   </header>
 
   <main class="container product-page">
-    <div class="product-grid">
-      <div class="product-media">
-        <img src="../project1/img/Tesla model s.jpg" alt="Tesla Model S" class="car-lg">
-      </div>
-      <div class="product-info">
-        <h1>Tesla Model S</h1>
-        <p class="price large">4 200 000 ₽</p>
-        <p><strong>Год выпуска:</strong> 2022</p>
-        <p><strong>Пробег:</strong> 15 000 км</p>
-        <p><strong>Кузов:</strong> Седан</p>
-        <p><strong>Двигатель:</strong> Электро, 670 л.с.</p>
-        <p><strong>Разгон 0-100 км/ч:</strong> 3.2 сек</p>
-        <p><strong>Запас хода:</strong> 652 км</p>
-
-        <div class="card-actions">
-          <a class="btn" href="#">Оставить заявку</a>
-          <button class="btn-outline">Позвонить</button>
-        </div>
-
-        <section class="description">
-          <h3>Описание</h3>
-          <p>Tesla Model S — электрический седан премиум-класса, сочетающий динамику спорткара, технологии и высокий уровень безопасности. Отличается большим запасом хода и автопилотом.</p>
-        </section>
-      </div>
-    </div>
-
-    <section class="similar">
-      <h2>Похожие авто</h2>
-      <div class="grid small-grid">
-        <article class="card small">
-          <div class="card-media"><img src="../project1/img/BMW_i4.jpg" alt="BMW i4"></div>
-          <div class="card-body"><h4>BMW i4</h4><p class="price">5 000 000 ₽</p></div>
-        </article>
-        <article class="card small">
-          <div class="card-media"><img src="../project1/img/audi_e-tron.jpg" alt="Audi e-tron"></div>
-          <div class="card-body"><h4>Audi e-tron</h4><p class="price">6 200 000 ₽</p></div>
-        </article>
-      </div>
-    </section>
+    <!-- Контент подставит JS -->
+    <div class="product-page__inner"></div>
   </main>
 
   <footer class="site-footer">
@@ -65,6 +30,7 @@
       <p>Практическая работа 1 // Ивашин Андрей // Автосалон</p>
     </div>
   </footer>
+
+  <script type="module" src="server/main.js"></script>
 </body>
 </html>
-
