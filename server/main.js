@@ -1,65 +1,46 @@
-// server/main.js
-import { validateForm } from './validation.js';
-import { loginUser, registerUser, getCurrentUser, logoutUser } from './auth.js';
+import { loadJSON } from './dataService.js';
 import { renderProductList, renderProductDetail } from './products.js';
-import { getProducts } from './mockDB.js';
+import { getCurrentUser, loginUser, registerUser } from './auth.js';
+import { validateLogin, validatePassword, validateName } from './validation.js';
 
-// Показываем имя пользователя в шапке (если есть)
-function showUserInHeader() {
-  const user = getCurrentUser();
-  const nav = document.querySelector('.nav');
-  if (!nav) return;
-  const existing = nav.querySelector('.user-name');
-  if (existing) existing.remove();
-  if (user) {
-    const span = document.createElement('span');
-    span.className = 'user-name';
-    span.textContent = user.name;
-    span.style.marginLeft = '14px';
-    nav.appendChild(span);
-  }
-}
-
-// Инициализация каталога на index.html
-function initCatalog() {
+// ---------- catalog ----------
+async function initCatalog() {
   const container = document.querySelector('.grid');
   if (!container) return;
-  renderProductList(container);
+  const products = await loadJSON('data/products.json');
+  renderProductList(container, products);
 }
 
-// Инициализация страницы продукта
-function initProductPage() {
-  const container = document.querySelector('.product-page__inner');
-  if (!container) return;
+// ---------- product page ----------
+async function initProductPage() {
+  const wrapper = document.querySelector('.product-page__inner');
+  if (!wrapper) return;
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  if (id) {
-    renderProductDetail(container, id);
-  } else {
-    container.innerHTML = '<p>Автомобиль не выбран. Вернитесь в каталог.</p>';
-  }
+  const products = await loadJSON('data/products.json');
+  const product = products.find(p => String(p.id) === String(id));
+  renderProductDetail(wrapper, product);
 }
 
-// Инициализация авторизации/регистрации
-function initAuth() {
+// ---------- auth (forms) ----------
+async function initAuthForms() {
   const loginForm = document.getElementById('login-form');
   const registerForm = document.getElementById('register-form');
 
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const login = form.login.value.trim();
-      const password = form.password.value;
-      const { isValid, loginError, passwordError } = validateForm({ login, password });
-      if (!isValid) {
-        alert((loginError ? loginError + '\n' : '') + (passwordError ? passwordError : ''));
+      const login = loginForm.login.value.trim();
+      const password = loginForm.password.value;
+      const loginErr = validateLogin(login);
+      const passErr = validatePassword(password);
+      if (loginErr || passErr) {
+        alert((loginErr ? loginErr + '\n' : '') + (passErr ? passErr : ''));
         return;
       }
-      const res = loginUser(login, password);
+      const res = await loginUser(login, password);
       if (res.success) {
-        alert('Вход выполнен: ' + res.user.name);
-        showUserInHeader();
+        alert('Вход успешен, ' + res.user.name);
         window.location.href = 'index.html';
       } else {
         alert(res.error);
@@ -68,21 +49,21 @@ function initAuth() {
   }
 
   if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
+    registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const name = form.name.value.trim();
-      const login = form.login.value.trim();
-      const password = form.password.value;
-      const { isValid, loginError, passwordError, nameError } = validateForm({ login, password, name });
-      if (!isValid) {
-        alert((nameError ? nameError + '\n' : '') + (loginError ? loginError + '\n' : '') + (passwordError ? passwordError : ''));
+      const name = registerForm.name.value.trim();
+      const login = registerForm.login.value.trim();
+      const password = registerForm.password.value;
+      const nameErr = validateName(name);
+      const loginErr = validateLogin(login);
+      const passErr = validatePassword(password);
+      if (nameErr || loginErr || passErr) {
+        alert((nameErr ? nameErr + '\n' : '') + (loginErr ? loginErr + '\n' : '') + (passErr ? passErr : ''));
         return;
       }
-      const res = registerUser({ login, password, name });
+      const res = await registerUser({ name, login, password });
       if (res.success) {
-        alert('Регистрация успешна: ' + res.user.name);
-        showUserInHeader();
+        alert('Регистрация успешна, ' + res.user.name);
         window.location.href = 'index.html';
       } else {
         alert(res.error);
@@ -91,10 +72,38 @@ function initAuth() {
   }
 }
 
-// старт
+// ---------- header user display ----------
+function showUserInHeader() {
+  const userRaw = localStorage.getItem('currentUser');
+  const nav = document.querySelector('.nav');
+  if (!nav) return;
+  // remove existing user-name or admin link
+  const existing = nav.querySelector('.user-name');
+  if (existing) existing.remove();
+  const adminLink = nav.querySelector('a[href="admin.html"]');
+  if (adminLink) adminLink.remove();
+
+  if (userRaw) {
+    const user = JSON.parse(userRaw);
+    const span = document.createElement('span');
+    span.className = 'user-name';
+    span.textContent = user.name;
+    span.style.marginLeft = '14px';
+    nav.appendChild(span);
+    if (user.role === 'admin') {
+      const link = document.createElement('a');
+      link.href = 'admin.html';
+      link.textContent = 'Админка';
+      link.className = 'btn-small';
+      nav.appendChild(link);
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  showUserInHeader();
   initCatalog();
   initProductPage();
-  initAuth();
+  initAuthForms();
+  showUserInHeader();
 });
+

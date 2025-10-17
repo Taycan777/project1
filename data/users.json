@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "login": "admin@example.com",
+    "password": "123456",
+    "name": "Администратор",
+    "role": "admin"
+  },
+  {
+    "id": 2,
+    "login": "user@example.com",
+    "password": "password",
+    "name": "Пользователь",
+    "role": "user"
+  },
+  {
+    "id": 3,
+    "login": "ivanov@example.com",
+    "password": "ivanov2021",
+    "name": "Иванов Иван",
+    "role": "user"
+  }
+]

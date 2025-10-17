@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Админ-панель — АвтоLuxe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header small">
+    <div class="container header-top">
+      <h1>Админ-панель</h1>
+      <a href="index.html" class="btn-small">На главную</a>
+    </div>
+  </header>
+
+  <main class="container admin-page">
+    <section>
+      <h2>Пользователи</h2>
+      <button id="addUserBtn" class="btn">Добавить пользователя</button>
+      <table id="usersTable" class="admin-table"></table>
+    </section>
+
+    <section style="margin-top:28px;">
+      <h2>Товары</h2>
+      <button id="addProductBtn" class="btn">Добавить товар</button>
+      <table id="productsTable" class="admin-table"></table>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Практическая работа 3 // Ивашин Андрей // АвтоLuxe</p>
+    </div>
+  </footer>
+
+  <script type="module" src="server/admin.js"></script>
+</body>
+</html>

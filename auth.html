@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ХЕДЕР -->
   <header class="site-header small">
     <div class="container header-top">
       <a class="brand" href="index.html">
@@ -20,13 +21,15 @@
     </div>
   </header>
 
+  <!-- ОСНОВНОЙ БЛОК -->
   <main class="auth-main">
     <div class="auth-box">
-      <div class="tabs" role="tablist">
+      <div class="tabs">
         <button class="tab-btn active" onclick="showTab('login')">Вход</button>
         <button class="tab-btn" onclick="showTab('register')">Регистрация</button>
       </div>
 
+      <!-- Вкладка вход -->
       <div id="login" class="tab-content active">
         <form class="auth-form" id="login-form" onsubmit="return false;">
           <label>Электронная почта
@@ -42,6 +45,7 @@
         </form>
       </div>
 
+      <!-- Вкладка регистрация -->
       <div id="register" class="tab-content">
         <form class="auth-form" id="register-form" onsubmit="return false;">
           <label>ФИО
@@ -61,12 +65,14 @@
     </div>
   </main>
 
+  <!-- ФУТЕР -->
   <footer class="site-footer">
     <div class="container">
       <p>Практическая работа 1 // Ивашин Андрей // Автосалон</p>
     </div>
   </footer>
 
+  <!-- СКРИПТ ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК -->
   <script>
     function showTab(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -76,6 +82,8 @@
     }
   </script>
 
+  <!-- ОСНОВНОЙ JS -->
   <script type="module" src="server/main.js"></script>
 </body>
 </html>
+
