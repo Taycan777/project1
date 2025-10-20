@@ -9,24 +9,52 @@
 <body>
   <header class="site-header small">
     <div class="container header-top">
-      <h1>Админ-панель</h1>
-      <a href="index.html" class="btn-small">На главную</a>
+      <a class="brand" href="index.html">
+        <img src="https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/logo.jpg" alt="AutoLuxe logo" class="logo-img">
+        <span class="brand-name">АвтоLuxe</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Главная</a>
+        <a href="auth.html" class="btn-small">Выход</a>
+      </nav>
     </div>
   </header>
 
   <main class="container admin-page">
     <section>
-      <h2>Пользователи</h2>
-      <button id="addUserBtn" class="btn">Добавить пользователя</button>
-      <table id="usersTable" class="admin-table"></table>
+      <div class="section-header">
+        <h2>Пользователи</h2>
+        <button id="addUserBtn" class="btn">Добавить пользователя</button>
+      </div>
+      <div class="table-scroll">
+        <table id="usersTable" class="admin-table"></table>
+      </div>
     </section>
 
-    <section style="margin-top:28px;">
-      <h2>Товары</h2>
-      <button id="addProductBtn" class="btn">Добавить товар</button>
-      <table id="productsTable" class="admin-table"></table>
+    <section>
+      <div class="section-header">
+        <h2>Товары</h2>
+        <button id="addProductBtn" class="btn">Добавить товар</button>
+      </div>
+      <div class="table-scroll">
+        <table id="productsTable" class="admin-table"></table>
+      </div>
     </section>
   </main>
+
+  <!-- МОДАЛЬНЫЕ ФОРМЫ -->
+  <div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal">
+      <h3 id="modalTitle"></h3>
+      <form id="modalForm">
+        <div id="modalFields"></div>
+        <div style="margin-top:16px; display:flex; gap:10px; justify-content:flex-end;">
+          <button type="submit" class="btn">Сохранить</button>
+          <button type="button" class="btn-outline" id="closeModalBtn">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <footer class="site-footer">
     <div class="container">
@@ -37,3 +65,4 @@
   <script type="module" src="server/admin.js"></script>
 </body>
 </html>
+

@@ -1,22 +1,34 @@
-import { loadJSON, saveToLocal } from './dataService.js';
+import { getUsers, createUser, updateUser, deleteUser, getProducts, createProduct, updateProduct, deleteProduct } from './dataService.js';
+
+let users = [];
+let products = [];
+
+const modalOverlay = document.getElementById('modalOverlay');
+const modalTitle = document.getElementById('modalTitle');
+const modalForm = document.getElementById('modalForm');
+const modalFields = document.getElementById('modalFields');
+const closeModalBtn = document.getElementById('closeModalBtn');
 
 async function initAdmin() {
-  // load (will be saved to localStorage if first time)
-  const users = await loadJSON('data/users.json');
-  const products = await loadJSON('data/products.json');
+  try {
+    users = await getUsers();
+    products = await getProducts();
+    renderUsers();
+    renderProducts();
 
-  // render
-  renderUsers(users);
-  renderProducts(products);
-
-  // handlers
-  document.getElementById('addUserBtn').addEventListener('click', () => openUserEditor());
-  document.getElementById('addProductBtn').addEventListener('click', () => openProductEditor());
+    document.getElementById('addUserBtn').addEventListener('click', () => openUserModal());
+    document.getElementById('addProductBtn').addEventListener('click', () => openProductModal());
+    closeModalBtn.addEventListener('click', closeModal);
+    modalForm.addEventListener('submit', onModalSubmit);
+  } catch (error) {
+    console.error('Error initializing admin:', error);
+    alert('Ошибка загрузки данных: ' + error.message);
+  }
 }
 
-function renderUsers(users) {
+// ---------------- USERS ----------------
+function renderUsers() {
   const table = document.getElementById('usersTable');
-  if (!table) return;
   table.innerHTML = `
     <tr><th>id</th><th>Имя</th><th>Логин</th><th>Роль</th><th>Действия</th></tr>
     ${users.map(u => `
@@ -32,28 +44,162 @@ function renderUsers(users) {
       </tr>
     `).join('')}
   `;
-  // attach listeners
   table.querySelectorAll('.edit-user').forEach(b => b.addEventListener('click', e => {
     const id = Number(e.currentTarget.dataset.id);
-    editUser(id);
+    const user = users.find(u => u.id === id);
+    openUserModal(user);
   }));
-  table.querySelectorAll('.del-user').forEach(b => b.addEventListener('click', e => {
+  table.querySelectorAll('.del-user').forEach(b => b.addEventListener('click', async e => {
     const id = Number(e.currentTarget.dataset.id);
-    deleteUser(id);
+    if(confirm('Удалить пользователя?')) {
+      try {
+        await deleteUser(id);
+        users = users.filter(u => u.id !== id);
+        renderUsers();
+      } catch (error) {
+        alert('Ошибка удаления пользователя: ' + error.message);
+      }
+    }
   }));
 }
 
-function renderProducts(products) {
+function openUserModal(user={}) {
+  modalOverlay.classList.remove('hidden');
+  modalTitle.textContent = user.id ? 'Редактировать пользователя' : 'Добавить пользователя';
+  modalForm.dataset.type = 'user';
+  modalForm.dataset.id = user.id || '';
+  modalFields.innerHTML = `
+    <input name="name" placeholder="Имя" value="${user.name||''}" required>
+    <input name="login" type="email" placeholder="Email" value="${user.login||''}" required>
+    <select name="role">
+      <option value="user" ${user.role==='user'?'selected':''}>User</option>
+      <option value="admin" ${user.role==='admin'?'selected':''}>Admin</option>
+    </select>
+  `;
+}
+
+function openProductModal(prod={}) {
+  modalOverlay.classList.remove('hidden');
+  modalTitle.textContent = prod.id ? 'Редактировать товар' : 'Добавить товар';
+  modalForm.dataset.type = 'product';
+  modalForm.dataset.id = prod.id || '';
+  modalFields.innerHTML = `
+    <input name="name" placeholder="Название" value="${prod.name||''}" required>
+    <input name="price" type="number" placeholder="Цена" value="${prod.price||''}" required>
+    <input name="year" type="number" placeholder="Год" value="${prod.year||''}">
+    <input name="mileage" placeholder="Пробег" value="${prod.mileage||''}">
+    <input name="body" placeholder="Тип кузова" value="${prod.body||''}">
+    <input name="engine" placeholder="Двигатель" value="${prod.engine||''}">
+    <input name="acceleration" placeholder="Разгон до 100 км/ч" value="${prod.acceleration||''}">
+    <input name="description" placeholder="Описание" value="${prod.description||''}">
+    <input name="image" type="file" accept="image/*" placeholder="Изображение">
+    <input name="imageUrl" placeholder="Или URL изображения" value="${prod.image||''}">
+  `;
+}
+
+function closeModal() {
+  modalOverlay.classList.add('hidden');
+  modalForm.dataset.id = '';
+  modalForm.dataset.type = '';
+}
+
+// ---------------- SUBMIT MODAL ----------------
+async function onModalSubmit(e) {
+  e.preventDefault();
+  const type = modalForm.dataset.type;
+  const id = modalForm.dataset.id;
+  const formData = new FormData(modalForm);
+  
+  try {
+    if(type==='user') {
+      const userData = {
+        name: formData.get('name'),
+        login: formData.get('login'),
+        role: formData.get('role'),
+        password: id ? users.find(u=>u.id==id).password : 'changeme'
+      };
+      
+      if(id) {
+        const updatedUser = await updateUser(id, userData);
+        const idx = users.findIndex(u=>u.id==id);
+        users[idx] = updatedUser;
+      } else {
+        const newUser = await createUser(userData);
+        users.push(newUser);
+      }
+      renderUsers();
+    } else if(type==='product') {
+      const prodData = {
+        name: formData.get('name'),
+        price: Number(formData.get('price')),
+        year: formData.get('year'),
+        mileage: formData.get('mileage'),
+        body: formData.get('body'),
+        engine: formData.get('engine'),
+        acceleration: formData.get('acceleration'),
+        description: formData.get('description'),
+        image: formData.get('imageUrl') || ''
+      };
+      
+      // Handle file upload
+      const imageFile = formData.get('image');
+      if (imageFile && imageFile.size > 0) {
+        const uploadFormData = new FormData();
+        uploadFormData.append('image', imageFile);
+        Object.keys(prodData).forEach(key => {
+          if (key !== 'image') {
+            uploadFormData.append(key, prodData[key]);
+          }
+        });
+        
+        const response = await fetch(`http://localhost:3000/api/products${id ? `/${id}` : ''}`, {
+          method: id ? 'PUT' : 'POST',
+          body: uploadFormData
+        });
+        
+        if (!response.ok) {
+          throw new Error('Ошибка загрузки изображения');
+        }
+        
+        const updatedProduct = await response.json();
+        
+        if(id) {
+          const idx = products.findIndex(p=>p.id==id);
+          products[idx] = updatedProduct;
+        } else {
+          products.push(updatedProduct);
+        }
+      } else {
+        if(id) {
+          const updatedProduct = await updateProduct(id, prodData);
+          const idx = products.findIndex(p=>p.id==id);
+          products[idx] = updatedProduct;
+        } else {
+          const newProduct = await createProduct(prodData);
+          products.push(newProduct);
+        }
+      }
+      renderProducts();
+    }
+    closeModal();
+  } catch (error) {
+    alert('Ошибка сохранения: ' + error.message);
+  }
+}
+
+// ---------------- PRODUCTS ----------------
+function renderProducts() {
   const table = document.getElementById('productsTable');
-  if (!table) return;
   table.innerHTML = `
-    <tr><th>id</th><th>Название</th><th>Цена</th><th>Год</th><th>Действия</th></tr>
+    <tr><th>id</th><th>Название</th><th>Цена</th><th>Год</th><th>Пробег</th><th>Кузов</th><th>Действия</th></tr>
     ${products.map(p => `
       <tr data-id="${p.id}">
         <td>${p.id}</td>
         <td>${p.name}</td>
         <td>${p.price.toLocaleString()}</td>
-        <td>${p.year || ''}</td>
+        <td>${p.year||''}</td>
+        <td>${p.mileage||''}</td>
+        <td>${p.body||''}</td>
         <td>
           <button class="btn edit-prod" data-id="${p.id}">✏️</button>
           <button class="btn-outline del-prod" data-id="${p.id}">🗑️</button>
@@ -63,118 +209,22 @@ function renderProducts(products) {
   `;
   table.querySelectorAll('.edit-prod').forEach(b => b.addEventListener('click', e => {
     const id = Number(e.currentTarget.dataset.id);
-    editProduct(id);
+    const prod = products.find(p=>p.id===id);
+    openProductModal(prod);
   }));
-  table.querySelectorAll('.del-prod').forEach(b => b.addEventListener('click', e => {
+  table.querySelectorAll('.del-prod').forEach(b => b.addEventListener('click', async e => {
     const id = Number(e.currentTarget.dataset.id);
-    deleteProduct(id);
+    if(confirm('Удалить товар?')){
+      try {
+        await deleteProduct(id);
+        products = products.filter(p=>p.id!==id);
+        renderProducts();
+      } catch (error) {
+        alert('Ошибка удаления товара: ' + error.message);
+      }
+    }
   }));
 }
 
-// helpers to get and save DB from localStorage (mirror of dataService keys)
-function getLocal(keyPath) {
-  const raw = localStorage.getItem('db:' + keyPath);
-  return raw ? JSON.parse(raw) : null;
-}
-function setLocal(keyPath, data) {
-  localStorage.setItem('db:' + keyPath, JSON.stringify(data));
-  // re-render to reflect changes
-  if (keyPath === 'data/users.json') renderUsers(data);
-  if (keyPath === 'data/products.json') renderProducts(data);
-}
+document.addEventListener('DOMContentLoaded', initAdmin);
 
-// CRUD user
-function openUserEditor(user = {}) {
-  const name = prompt('Имя:', user.name || '');
-  if (name === null) return;
-  const login = prompt('Логин (email):', user.login || '');
-  if (login === null) return;
-  const role = prompt('Роль (admin/user):', user.role || 'user');
-  if (role === null) return;
-  const users = getLocal('data/users.json') || [];
-  if (user.id) {
-    // update
-    const idx = users.findIndex(u => u.id === user.id);
-    if (idx >= 0) {
-      users[idx].name = name;
-      users[idx].login = login;
-      users[idx].role = role;
-    }
-  } else {
-    const id = users.length ? Math.max(...users.map(u=>u.id)) + 1 : 1;
-    users.push({ id, name, login, password: 'changeme', role });
-  }
-  setLocal('data/users.json', users);
-}
-
-function editUser(id) {
-  const users = getLocal('data/users.json') || [];
-  const user = users.find(u => u.id === id);
-  if (!user) return alert('Пользователь не найден');
-  openUserEditor(user);
-}
-
-function deleteUser(id) {
-  if (!confirm('Удалить пользователя?')) return;
-  let users = getLocal('data/users.json') || [];
-  users = users.filter(u => u.id !== id);
-  setLocal('data/users.json', users);
-}
-
-// CRUD products
-function openProductEditor(prod = {}) {
-  const name = prompt('Название:', prod.name || '');
-  if (name === null) return;
-  const priceStr = prompt('Цена (число):', prod.price || '');
-  if (priceStr === null) return;
-  const price = Number(priceStr.replace(/\s/g,''));
-  const year = prompt('Год:', prod.year || '');
-  const image = prompt('URL изображения:', prod.image || '');
-  const products = getLocal('data/products.json') || [];
-  if (prod.id) {
-    const idx = products.findIndex(p => p.id === prod.id);
-    if (idx >= 0) {
-      products[idx].name = name;
-      products[idx].price = price;
-      products[idx].year = year;
-      products[idx].image = image;
-    }
-  } else {
-    const id = products.length ? Math.max(...products.map(p=>p.id)) + 1 : 1;
-    products.push({ id, name, price, year, image, description: '' });
-  }
-  setLocal('data/products.json', products);
-}
-
-function editProduct(id) {
-  const products = getLocal('data/products.json') || [];
-  const prod = products.find(p => p.id === id);
-  if (!prod) return alert('Товар не найден');
-  openProductEditor(prod);
-}
-
-function deleteProduct(id) {
-  if (!confirm('Удалить товар?')) return;
-  let products = getLocal('data/products.json') || [];
-  products = products.filter(p => p.id !== id);
-  setLocal('data/products.json', products);
-}
-
-// initial copy from file-storage to localStorage (in case admin opened direct)
-async function ensureLocalFromFile() {
-  // if no local copy, trigger load by calling loadJSON in dataService (fetch done earlier on page)
-  // simpler approach: try to read local; if null => fetch files via fetch and save
-  if (!getLocal('data/users.json')) {
-    const u = await fetch('data/users.json').then(r=>r.json());
-    setLocal('data/users.json', u);
-  }
-  if (!getLocal('data/products.json')) {
-    const p = await fetch('data/products.json').then(r=>r.json());
-    setLocal('data/products.json', p);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  await ensureLocalFromFile();
-  initAdmin();
-});

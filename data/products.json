@@ -9,7 +9,7 @@
     "engine": "Электро, 670 л.с.",
     "acceleration": "3.2 сек",
     "description": "Электрический седан премиум-класса, сочетает динамику спорткара и технологии.",
-    "image": "https://i.ibb.co/6cCMVygn/Tesla-model-s.jpg"
+    "image": "https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/Tesla%20model%20s.jpg"
   },
   {
     "id": 2,
@@ -21,7 +21,7 @@
     "engine": "3.0 L, 400 л.с.",
     "acceleration": "5.4 сек",
     "description": "Премиальный кроссовер с богатой комплектацией и комфортным салоном.",
-    "image": "https://i.ibb.co/35h322ZF/bmw-x5.jpg"
+    "image": "https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/bmw_x5.jpg"
   },
   {
     "id": 3,
@@ -33,7 +33,7 @@
     "engine": "2.5 L, 194 л.с.",
     "acceleration": "8.5 сек",
     "description": "Практичный и экономичный кроссовер для городской жизни и путешествий.",
-    "image": "https://i.ibb.co/sdgFQL1k/mazda-cx5.jpg"
+    "image": "https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/mazda_cx5.jpg"
   },
   {
     "id": 4,
@@ -45,7 +45,7 @@
     "engine": "2.0 L, 252 л.с.",
     "acceleration": "6.5 сек",
     "description": "Комфортный бизнес-седан с высоким уровнем безопасности и сборки.",
-    "image": "https://i.ibb.co/v6GZFb7p/Audi-A6.jpg"
+    "image": "https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/Audi_A6.jpg"
   },
   {
     "id": 5,
@@ -57,7 +57,7 @@
     "engine": "2.0 L, 255 л.с.",
     "acceleration": "5.9 сек",
     "description": "Элегантный седан с премиальным интерьером и современными системами безопасности.",
-    "image": "https://i.ibb.co/dJsycsbF/mercedes-benz-c-class.jpg"
+    "image": "https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/mercedes-benz_c-class.jpg"
   },
   {
     "id": 6,
@@ -69,7 +69,7 @@
     "engine": "2.5 L, 203 л.с.",
     "acceleration": "8.2 сек",
     "description": "Надёжный седан для ежедневной эксплуатации, сочетает комфорт и экономичность.",
-    "image": "https://i.ibb.co/fVSmxd0y/toyota-camry.jpg"
+    "image": "https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/toyota_camry.jpg"
   },
   {
     "id": 7,
@@ -81,7 +81,7 @@
     "engine": "3.5 L, 308 л.с.",
     "acceleration": "7.5 сек",
     "description": "Премиальный кроссовер с комфортным салоном и богатым оснащением.",
-    "image": "https://i.ibb.co/fV4ByZXp/Lexus-RX-350.jpg"
+    "image": "https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/Lexus_RX_350.jpg"
   },
   {
     "id": 8,
@@ -93,6 +93,6 @@
     "engine": "2.4 L, 184 л.с.",
     "acceleration": "9.0 сек",
     "description": "Практичный кроссовер для семьи, удобный и экономичный.",
-    "image": "https://i.ibb.co/FFW5dt0/kia-sportage.jpg"
+    "image": "https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/kia_sportage.jpg"
   }
 ]

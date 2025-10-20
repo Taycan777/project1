@@ -19,5 +19,12 @@
     "password": "ivanov2021",
     "name": "Иванов Иван",
     "role": "user"
+  },
+  {
+    "id": 4,
+    "login": "qwerty@gmail.com",
+    "password": "qazqazwsx",
+    "name": "Иванов Артем",
+    "role": "user"
   }
 ]
