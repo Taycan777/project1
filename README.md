@@ -8,9 +8,7 @@ npm install
 
 ### 2. Настройка Supabase
 
-1. Создайте проект на [supabase.com](https://supabase.com)
-2. Создайте bucket с именем `images` в Storage
-3. Скопируйте `env.example` в `.env` и заполните данные:
+1. Файл .env находится в облаке, его необходимо скопировать и вставить в папку проекта.
 
 ```env
 SUPABASE_URL=your_supabase_url_here
