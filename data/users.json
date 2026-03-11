@@ -2,29 +2,29 @@
   {
     "id": 1,
     "login": "admin@example.com",
-    "password": "123456",
     "name": "Администратор",
-    "role": "admin"
+    "role": "admin",
+    "passwordHash": "9b7a3bd3ecf491132db37694f4cabc82:27eccc45007e6db8b52f65d91b409fe54b97b0a1c16c9bd3e4cea762a84e046c4add6e75fef1aa968492a3f99fd91b7bd7f1e400c17f45bd287b3053eee0a340"
   },
   {
     "id": 2,
     "login": "user@example.com",
-    "password": "password",
     "name": "Пользователь",
-    "role": "user"
+    "role": "user",
+    "passwordHash": "e5c3ed45daa486f8fdcbb59c01712681:970f4ca2868fd8173e66e693616049c79121275c22e1390359ada8540de1e73487557d47b604f4e4d175d1033bf019198714598b683dbd14bce92069e7b8b108"
   },
   {
     "id": 3,
     "login": "ivanov@example.com",
-    "password": "ivanov2021",
     "name": "Иванов Иван",
-    "role": "user"
+    "role": "user",
+    "passwordHash": "20ade390eb2fbb93cd4368b77a236d4e:4da401a495c31358bdf16521e62362bbe8cfea7fba23d97fa7983443efcdb81fd6a1581de4fa84c5db9185c0f20e6551692eb1d10a99d0b9a488e537dcf30aa8"
   },
   {
     "id": 4,
     "login": "qwerty@gmail.com",
-    "password": "qazqazwsx",
     "name": "Иванов Артем",
-    "role": "user"
+    "role": "user",
+    "passwordHash": "da5f159cb5734e653f5401c29d7bbb2f:53fadcb3407c30f3bb78511337e88741cfa017ca6fb90d2e1cf37969d8bf01f3023903bed527bdd46a804760010dc867003da652b6277428540197c7600fe282"
   }
 ]

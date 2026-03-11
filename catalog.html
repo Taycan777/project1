@@ -1,0 +1,111 @@
+﻿<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Каталог автомобилей — АвтоLuxe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header small">
+    <div class="container header-top">
+      <a class="brand" href="index.html">
+        <img src="https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/logo.jpg" alt="AutoLuxe logo" class="logo-img">
+        <span class="brand-name">АвтоLuxe</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
+        <a href="auth.html" class="btn-small">Вход / Регистрация</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="catalog-page">
+    <section class="catalog-hero">
+      <div class="container catalog-hero__inner">
+        <div>
+          <div class="eyebrow eyebrow--dark">Подбор премиальных автомобилей</div>
+          <h1>Каталог автомобилей в наличии</h1>
+          <p>Седаны и кроссоверы с прозрачной историей, аккуратным состоянием и готовностью к быстрой сделке.</p>
+        </div>
+        <div class="catalog-hero__note glass-card">
+          <strong>Подберем в день обращения</strong>
+          <span>Позвоните, если хотите получить персональную подборку под ваш бюджет и задачи.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell section-shell--light">
+      <div class="container">
+        <div class="listing-toolbar">
+          <div>
+            <div class="eyebrow eyebrow--dark">В наличии сейчас</div>
+            <h2>Выберите автомобиль</h2>
+          </div>
+          <div class="results-summary" id="catalogResultsSummary" aria-live="polite">Загружаем каталог...</div>
+        </div>
+
+        <form class="filters-bar" id="catalogFilters">
+          <div class="filters-grid">
+            <label class="filter-field">
+              <span>Поиск</span>
+              <input type="search" name="search" placeholder="Марка, кузов, двигатель">
+            </label>
+            <label class="filter-field">
+              <span>Кузов</span>
+              <select name="body">
+                <option value="">Любой кузов</option>
+              </select>
+            </label>
+            <label class="filter-field">
+              <span>Год</span>
+              <select name="year">
+                <option value="">Любой год</option>
+              </select>
+            </label>
+            <label class="filter-field">
+              <span>Сортировка</span>
+              <select name="sort">
+                <option value="featured">Сначала новые в каталоге</option>
+                <option value="price-asc">Сначала дешевле</option>
+                <option value="price-desc">Сначала дороже</option>
+                <option value="year-desc">Сначала свежее</option>
+                <option value="mileage-asc">С меньшим пробегом</option>
+              </select>
+            </label>
+          </div>
+          <button type="reset" class="btn-outline filter-reset">Сбросить фильтры</button>
+        </form>
+
+        <div class="grid catalog-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-title">Часы работы</div>
+          <div class="footer-text">Пн–Пт: 09:00–20:00</div>
+          <div class="footer-text">Сб–Вс: 10:00–18:00</div>
+        </div>
+        <div>
+          <div class="footer-title">Адрес</div>
+          <div class="footer-text">г. Москва, ул. Примерная, 10</div>
+          <div class="footer-text">Ориентир: БЦ «Авто Плаза», вход А</div>
+        </div>
+        <div>
+          <div class="footer-title">Связаться с нами</div>
+          <a class="footer-link" href="tel:+70000000000">+7 (000) 000-00-00</a>
+          <a class="footer-link" href="mailto:info@autoluxe.ru">info@autoluxe.ru</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="server/main.js"></script>
+</body>
+</html>
+

@@ -1,100 +1,108 @@
-// API service for working with server endpoints
-const API_BASE = 'http://localhost:3000/api';
+﻿import { getAuthHeaders } from './session.js';
 
-// Generic API request function
+const API_BASE = '/api';
+
 async function apiRequest(endpoint, options = {}) {
-  const url = `${API_BASE}${endpoint}`;
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers
-    },
-    ...options
+  const isFormData = options.body instanceof FormData;
+  const headers = {
+    ...getAuthHeaders(),
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...options.headers
   };
 
-  const response = await fetch(url, config);
-  
+  const response = await fetch(`${API_BASE}${endpoint}`, {
+    ...options,
+    headers
+  });
+
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || `HTTP error! status: ${response.status}`);
   }
-  
-  return await response.json();
+
+  return response.json();
 }
 
-// Products API
 export async function getProducts() {
-  return await apiRequest('/products');
-}
-
-export async function getProduct(id) {
-  return await apiRequest(`/products/${id}`);
+  return apiRequest('/products');
 }
 
 export async function createProduct(productData) {
-  return await apiRequest('/products', {
+  return apiRequest('/products', {
     method: 'POST',
     body: JSON.stringify(productData)
   });
 }
 
 export async function updateProduct(id, productData) {
-  return await apiRequest(`/products/${id}`, {
+  return apiRequest(`/products/${id}`, {
     method: 'PUT',
     body: JSON.stringify(productData)
   });
 }
 
+export async function saveProductWithImage(id, productData, imageFile) {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+
+  Object.entries(productData).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, String(value));
+    }
+  });
+
+  return apiRequest(`/products${id ? `/${id}` : ''}`, {
+    method: id ? 'PUT' : 'POST',
+    body: formData
+  });
+}
+
 export async function deleteProduct(id) {
-  return await apiRequest(`/products/${id}`, {
+  return apiRequest(`/products/${id}`, {
     method: 'DELETE'
   });
 }
 
-// Users API
 export async function getUsers() {
-  return await apiRequest('/users');
+  return apiRequest('/users');
 }
 
 export async function createUser(userData) {
-  return await apiRequest('/users', {
+  return apiRequest('/users', {
     method: 'POST',
     body: JSON.stringify(userData)
   });
 }
 
 export async function updateUser(id, userData) {
-  return await apiRequest(`/users/${id}`, {
+  return apiRequest(`/users/${id}`, {
     method: 'PUT',
     body: JSON.stringify(userData)
   });
 }
 
 export async function deleteUser(id) {
-  return await apiRequest(`/users/${id}`, {
+  return apiRequest(`/users/${id}`, {
     method: 'DELETE'
   });
 }
 
-// Auth API
 export async function loginUser(login, password) {
-  return await apiRequest('/auth/login', {
+  return apiRequest('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ login, password })
   });
 }
 
-// Legacy functions for backward compatibility
-export async function loadJSON(path) {
-  if (path === 'data/products.json') {
-    return await getProducts();
-  } else if (path === 'data/users.json') {
-    return await getUsers();
-  }
-  throw new Error('Unknown path: ' + path);
+export async function logoutUser() {
+  return apiRequest('/auth/logout', {
+    method: 'POST'
+  });
 }
 
-export function saveToLocal(path, data) {
-  // This function is now deprecated, data is saved via API
-  console.warn('saveToLocal is deprecated, use API functions instead');
+export async function createInquiry(inquiryData) {
+  return apiRequest('/inquiries', {
+    method: 'POST',
+    body: JSON.stringify(inquiryData)
+  });
 }
