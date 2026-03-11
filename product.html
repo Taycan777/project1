@@ -1,10 +1,11 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>АвтоLuxe — Автомобиль</title>
+  <title>АвтоLuxe — Детали автомобиля</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="https://jtlhmxgisnhnbevdmfna.supabase.co/storage/v1/object/public/Images/logo.jpg">
 </head>
 <body>
   <header class="site-header small">
@@ -15,22 +16,293 @@
       </a>
       <nav class="nav">
         <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
         <a href="auth.html" class="btn-small">Вход</a>
       </nav>
     </div>
   </header>
 
-  <main class="container product-page">
-    <div class="product-page__inner"></div>
+  <main class="product-page">
+    <div class="container">
+      <a href="catalog.html" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M7.72 12.53a.75.75 0 010-1.06l7.5-7.5a.75.75 0 111.06 1.06L9.31 12l6.97 6.97a.75.75 0 11-1.06 1.06l-7.5-7.5z" clip-rule="evenodd" />
+        </svg>
+        Назад к каталогу
+      </a>
+      <div class="product-page__inner">
+        <div class="loading">
+          <span class="sr-only">Загрузка...</span>
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <p>Практическая работа 3 // Ивашин Андрей // АвтоLuxe</p>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-title">Часы работы</div>
+          <div class="footer-text">Пн–Пт: 09:00–20:00</div>
+          <div class="footer-text">Сб–Вс: 10:00–18:00</div>
+        </div>
+        <div>
+          <div class="footer-title">Адрес</div>
+          <div class="footer-text">г. Москва, ул. Примерная, 10</div>
+          <div class="footer-text">Ориентир: БЦ «Авто Плаза», вход А</div>
+        </div>
+        <div>
+          <div class="footer-title">Связаться с нами</div>
+          <a class="footer-link" href="tel:+70000000000">+7 (000) 000-00-00</a>
+          <a class="footer-link" href="mailto:info@autoluxe.ru">info@autoluxe.ru</a>
+        </div>
+      </div>
     </div>
   </footer>
 
-  <script type="module" src="server/main.js"></script>
+  <script type="module" src="./server/main.js"></script>
+  <script type="module">
+    import { getProducts, createInquiry } from './server/dataService.js';
+    import { formatPrice, escapeHtml, escapeAttr } from './server/products.js';
+
+    function showLoading() {
+      const container = document.querySelector('.product-page__inner');
+      if (container) {
+        container.innerHTML = `
+          <div class="loading">
+            <span class="sr-only">Загрузка...</span>
+          </div>`;
+      }
+    }
+
+    function showError(message) {
+      const container = document.querySelector('.product-page__inner');
+      if (container) {
+        container.innerHTML = `<div class="error-message">${escapeHtml(message)}</div>`;
+      }
+    }
+
+    function formatMileage(mileage) {
+      if (!mileage) return '-';
+      return mileage.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function normalizeMileage(rawMileage) {
+      if (!rawMileage) return '-';
+      const value = String(rawMileage).trim();
+      const lower = value.toLowerCase();
+      if (lower.includes('км')) return value;
+      if (/[a-zа-я]/i.test(value)) return value;
+      const digits = value.replace(/[^\d]/g, '');
+      if (!digits) return value;
+      return `${formatMileage(digits)} км`;
+    }
+
+    function normalizeAcceleration(rawAcceleration) {
+      if (!rawAcceleration) return '-';
+      const value = String(rawAcceleration).trim();
+      const lower = value.toLowerCase();
+      if (lower.includes('сек')) return value;
+      if (/[a-zа-я]/i.test(value)) return value;
+      return `${value} сек`;
+    }
+
+    function createStatusMarkup(message, type = '') {
+      const className = type ? `form-status ${type}` : 'form-status';
+      return `<div class="${className}" role="status">${escapeHtml(message)}</div>`;
+    }
+
+    function openRequestModal(product) {
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.innerHTML = `
+        <div class="modal-content modal-content--wide" role="dialog" aria-modal="true" aria-labelledby="inquiry-title">
+          <div class="modal-productLabel">Заявка на автомобиль</div>
+          <h3 id="inquiry-title">${escapeHtml(product.name)}</h3>
+          <p>Оставьте контакты, и менеджер свяжется с вами, чтобы согласовать осмотр, бронь или детали сделки.</p>
+          <form class="auth-form" id="inquiry-form">
+            <label>Как к вам обращаться
+              <input type="text" name="customerName" placeholder="Иван Иванов" required>
+            </label>
+            <label>Телефон
+              <input type="tel" name="phone" placeholder="+7 (999) 123-45-67" required>
+            </label>
+            <label>Удобный способ связи
+              <select name="preferredContact">
+                <option value="phone">Телефон</option>
+                <option value="telegram">Telegram</option>
+                <option value="whatsapp">WhatsApp</option>
+              </select>
+            </label>
+            <label>Комментарий
+              <textarea name="comment" placeholder="Например: хочу записаться на просмотр вечером"></textarea>
+            </label>
+            <div id="inquiry-status">${createStatusMarkup('Менеджер ответит после отправки заявки.')}</div>
+            <div class="modal-actions modal-actions--split">
+              <button class="btn btn-primary" type="submit">Отправить заявку</button>
+              <button class="btn btn-outline" type="button" id="cancel-request">Отмена</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      const form = modal.querySelector('#inquiry-form');
+      const status = modal.querySelector('#inquiry-status');
+      const closeButton = modal.querySelector('#cancel-request');
+      const firstField = form?.querySelector('input, select, textarea');
+
+      const closeModal = () => {
+        document.removeEventListener('keydown', onKeyDown);
+        modal.remove();
+      };
+
+      const onKeyDown = (event) => {
+        if (event.key === 'Escape') {
+          closeModal();
+        }
+      };
+
+      document.addEventListener('keydown', onKeyDown);
+      firstField?.focus();
+
+      closeButton?.addEventListener('click', closeModal);
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+          closeModal();
+        }
+      });
+
+      form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const submitButton = form.querySelector('[type="submit"]');
+        const formData = new FormData(form);
+        const payload = {
+          productId: product.id,
+          customerName: String(formData.get('customerName') || '').trim(),
+          phone: String(formData.get('phone') || '').trim(),
+          preferredContact: String(formData.get('preferredContact') || 'phone'),
+          comment: String(formData.get('comment') || '').trim()
+        };
+
+        submitButton.disabled = true;
+        status.innerHTML = createStatusMarkup('Отправляем заявку...', 'pending');
+
+        try {
+          await createInquiry(payload);
+          status.innerHTML = createStatusMarkup('Заявка отправлена. Менеджер свяжется с вами в ближайшее время.', 'success');
+          form.reset();
+          window.setTimeout(closeModal, 1400);
+        } catch (error) {
+          status.innerHTML = createStatusMarkup(error.message || 'Не удалось отправить заявку. Попробуйте еще раз.', 'error');
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+    }
+
+    function renderProduct(product) {
+      const container = document.querySelector('.product-page__inner');
+      if (!container) return;
+
+      document.title = `${product.name} — АвтоLuxe`;
+
+      container.innerHTML = `
+        <div class="pdp">
+          <div class="pdp__main">
+            <section class="pdp__media" aria-label="Фотография автомобиля">
+              <div class="pdp__imageWrap">
+                <img
+                  src="${escapeAttr(product.image || 'https://via.placeholder.com/1200x800?text=Изображение+недоступно')}"
+                  alt="${escapeAttr(product.name)}"
+                  class="pdp__image car-lg"
+                  onerror="this.src='https://via.placeholder.com/1200x800?text=Изображение+недоступно'"
+                  loading="lazy"
+                >
+              </div>
+            </section>
+
+            <section class="pdp__details" aria-label="Подробности">
+              <div class="pdp__desc" aria-label="Описание">
+                <h3 class="pdp__sectionTitle">Описание</h3>
+                <p class="pdp__descText">${escapeHtml(product.description || 'Описание скоро появится.')}</p>
+              </div>
+            </section>
+          </div>
+
+          <section class="pdp__summary" aria-label="Информация об автомобиле">
+            <header class="pdp__head">
+              <h1 class="pdp__title">${escapeHtml(product.name)}</h1>
+              <div class="pdp__priceRow">
+                <div class="pdp__price">${formatPrice(product.price)} <span class="pdp__currency">₽</span></div>
+                <div class="pdp__badge">В наличии</div>
+              </div>
+            </header>
+
+            <div class="pdp__specs" aria-label="Характеристики">
+              <div class="pdp__spec">
+                <div class="pdp__specName">Год выпуска</div>
+                <div class="pdp__specValue">${product.year || '-'}</div>
+              </div>
+              <div class="pdp__spec">
+                <div class="pdp__specName">Пробег</div>
+                <div class="pdp__specValue">${escapeHtml(normalizeMileage(product.mileage))}</div>
+              </div>
+              <div class="pdp__spec">
+                <div class="pdp__specName">Кузов</div>
+                <div class="pdp__specValue">${escapeHtml(product.body || '-')}</div>
+              </div>
+              <div class="pdp__spec">
+                <div class="pdp__specName">Двигатель</div>
+                <div class="pdp__specValue">${escapeHtml(product.engine || '-')}</div>
+              </div>
+              ${product.acceleration ? `
+              <div class="pdp__spec">
+                <div class="pdp__specName">Разгон 0-100 км/ч</div>
+                <div class="pdp__specValue">${escapeHtml(normalizeAcceleration(product.acceleration))}</div>
+              </div>` : ''}
+            </div>
+
+            <div class="pdp__actions">
+              <button class="btn btn-primary" id="request-btn">Оставить заявку</button>
+              <a class="btn btn-outline" href="tel:+70000000000" id="call-btn">Позвонить</a>
+            </div>
+          </section>
+        </div>
+      `;
+
+      document.getElementById('request-btn')?.addEventListener('click', () => openRequestModal(product));
+    }
+
+    async function loadProduct() {
+      showLoading();
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+
+      if (!id) {
+        showError('Автомобиль не найден.');
+        return;
+      }
+
+      try {
+        const products = await getProducts();
+        const product = products.find(item => String(item.id) === String(id));
+
+        if (!product) {
+          showError('Автомобиль не найден.');
+          return;
+        }
+
+        renderProduct(product);
+      } catch (error) {
+        console.error('Error loading product:', error);
+        showError('Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadProduct);
+  </script>
 </body>
 </html>
+
 

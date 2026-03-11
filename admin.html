@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
@@ -15,6 +15,7 @@
       </a>
       <nav class="nav">
         <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
         <a href="auth.html" class="btn-small">Выход</a>
       </nav>
     </div>
@@ -42,13 +43,12 @@
     </section>
   </main>
 
-  <!-- МОДАЛЬНЫЕ ФОРМЫ -->
   <div id="modalOverlay" class="modal-overlay hidden">
     <div class="modal">
       <h3 id="modalTitle"></h3>
       <form id="modalForm">
         <div id="modalFields"></div>
-        <div style="margin-top:16px; display:flex; gap:10px; justify-content:flex-end;">
+        <div class="modal-footer">
           <button type="submit" class="btn">Сохранить</button>
           <button type="button" class="btn-outline" id="closeModalBtn">Отмена</button>
         </div>
@@ -58,11 +58,26 @@
 
   <footer class="site-footer">
     <div class="container">
-      <p>Практическая работа 3 // Ивашин Андрей // АвтоLuxe</p>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-title">Часы работы</div>
+          <div class="footer-text">Пн–Пт: 09:00–20:00</div>
+          <div class="footer-text">Сб–Вс: 10:00–18:00</div>
+        </div>
+        <div>
+          <div class="footer-title">Адрес</div>
+          <div class="footer-text">г. Москва, ул. Примерная, 10</div>
+          <div class="footer-text">Ориентир: БЦ «Авто Плаза», вход А</div>
+        </div>
+        <div>
+          <div class="footer-title">Связаться с нами</div>
+          <a class="footer-link" href="tel:+70000000000">+7 (000) 000-00-00</a>
+          <a class="footer-link" href="mailto:info@autoluxe.ru">info@autoluxe.ru</a>
+        </div>
+      </div>
     </div>
   </footer>
 
   <script type="module" src="server/admin.js"></script>
 </body>
 </html>
-

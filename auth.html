@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ХЕДЕР -->
   <header class="site-header small">
     <div class="container header-top">
       <a class="brand" href="index.html">
@@ -16,29 +15,28 @@
       </a>
       <nav class="nav">
         <a href="index.html">Главная</a>
-        <a href="index.html">Каталог</a>
+        <a href="catalog.html">Каталог</a>
         <a href="auth.html" class="btn-small">Вход</a>
       </nav>
     </div>
   </header>
 
-  <!-- ОСНОВНОЙ БЛОК -->
   <main class="auth-main">
     <div class="auth-box">
       <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('login')">Вход</button>
-        <button class="tab-btn" onclick="showTab('register')">Регистрация</button>
+        <button class="tab-btn active" type="button" data-tab="login">Вход</button>
+        <button class="tab-btn" type="button" data-tab="register">Регистрация</button>
       </div>
 
-      <!-- Вкладка вход -->
       <div id="login" class="tab-content active">
-        <form class="auth-form" id="login-form" onsubmit="return false;">
+        <form class="auth-form" id="login-form">
           <label>Электронная почта
             <input type="email" name="login" placeholder="email@example.com" required>
           </label>
           <label>Пароль
             <input type="password" name="password" placeholder="••••••" required>
           </label>
+          <div id="login-status" class="form-status" data-auth-status role="status" aria-live="polite" hidden></div>
           <div class="auth-actions">
             <button class="btn" type="submit">Войти</button>
             <a class="link" href="#">Забыли пароль?</a>
@@ -46,9 +44,8 @@
         </form>
       </div>
 
-      <!-- Вкладка регистрация -->
       <div id="register" class="tab-content">
-        <form class="auth-form" id="register-form" onsubmit="return false;">
+        <form class="auth-form" id="register-form">
           <label>ФИО
             <input type="text" name="name" placeholder="Иванов Иван" required>
           </label>
@@ -58,6 +55,7 @@
           <label>Пароль
             <input type="password" name="password" placeholder="••••••" required>
           </label>
+          <div id="register-status" class="form-status" data-auth-status role="status" aria-live="polite" hidden></div>
           <div class="auth-actions">
             <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
           </div>
@@ -66,25 +64,27 @@
     </div>
   </main>
 
-  <!-- ФУТЕР -->
   <footer class="site-footer">
     <div class="container">
-      <p>Практическая работа 3 // Ивашин Андрей // Автосалон</p>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-title">Часы работы</div>
+          <div class="footer-text">Пн–Пт: 09:00–20:00</div>
+          <div class="footer-text">Сб–Вс: 10:00–18:00</div>
+        </div>
+        <div>
+          <div class="footer-title">Адрес</div>
+          <div class="footer-text">г. Москва, ул. Примерная, 10</div>
+          <div class="footer-text">Ориентир: БЦ «Авто Плаза», вход А</div>
+        </div>
+        <div>
+          <div class="footer-title">Связаться с нами</div>
+          <a class="footer-link" href="tel:+70000000000">+7 (000) 000-00-00</a>
+          <a class="footer-link" href="mailto:info@autoluxe.ru">info@autoluxe.ru</a>
+        </div>
+      </div>
     </div>
   </footer>
-
-  <!-- СКРИПТ ДЛЯ ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК -->
-  <script>
-    function showTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelector(`.tab-btn[onclick*="${tab}"]`).classList.add('active');
-      document.getElementById(tab).classList.add('active');
-    }
-  </script>
-
-  <!-- ОСНОВНОЙ JS -->
   <script type="module" src="server/main.js"></script>
 </body>
 </html>
-

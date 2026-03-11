@@ -1,16 +1,11 @@
-import { createUser, loginUser as apiLoginUser } from './dataService.js';
-
-export async function getUsers() {
-  const { getUsers } = await import('./dataService.js');
-  return await getUsers();
-}
+﻿import { createUser, loginUser as apiLoginUser, logoutUser } from './dataService.js';
+import { clearSession, getCurrentUser, persistSession } from './session.js';
 
 export async function registerUser({ login, password, name }) {
   try {
-    const user = await createUser({ login, password, name });
-    // сохранение безопасной копии currentUser (без пароля)
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    return { success: true, user };
+    const response = await createUser({ login, password, name });
+    persistSession(response.user, response.token);
+    return { success: true, user: response.user };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -18,20 +13,17 @@ export async function registerUser({ login, password, name }) {
 
 export async function loginUser(login, password) {
   try {
-    const user = await apiLoginUser(login, password);
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    return { success: true, user };
+    const response = await apiLoginUser(login, password);
+    persistSession(response.user, response.token);
+    return { success: true, user: response.user };
   } catch (error) {
     return { success: false, error: error.message };
   }
 }
 
 export function logout() {
-  localStorage.removeItem('currentUser');
+  clearSession();
+  logoutUser().catch(() => {});
 }
 
-export function getCurrentUser() {
-  const raw = localStorage.getItem('currentUser');
-  return raw ? JSON.parse(raw) : null;
-}
-
+export { getCurrentUser };
