@@ -3,6 +3,7 @@ import { renderProductList } from './products.js';
 import { getCurrentUser, loginUser, registerUser, logout } from './auth.js';
 import { validateLogin, validatePassword, validateName } from './validation.js';
 import { clearStatus, setStatus, showToast } from './ui.js';
+import { initHeaderMenu } from './headerMenu.js';
 
 function sortProducts(products, sortValue) {
   const sorted = [...products];
@@ -291,5 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFeaturedShowcase();
   initAuthForms();
   showUserInHeader();
+  initHeaderMenu();
 });
+
 

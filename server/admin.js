@@ -12,6 +12,7 @@
 import { getCurrentUser, logout } from './auth.js';
 import { escapeHtml, formatPrice } from './products.js';
 import { confirmAction, showToast } from './ui.js';
+import { initHeaderMenu } from './headerMenu.js';
 
 let users = [];
 let products = [];
@@ -55,6 +56,7 @@ async function initAdmin() {
   }
 
   wireLogoutLink();
+  initHeaderMenu();
 
   try {
     users = await getUsers();
@@ -316,3 +318,4 @@ function renderProducts() {
 }
 
 document.addEventListener('DOMContentLoaded', initAdmin);
+
